@@ -37,15 +37,17 @@ ENV/
 *.swo
 *~
 
-# Data files (uncomment if you want to exclude data)
-# data/
-# *.csv
-# *.npy
-# *.pkl
+data/raw/
+data/interim/
+data/processed/
 
-# Models (uncomment if you want to exclude trained models)
-# models/*.pkl
-# models/*.png
+*.pkl
+*.csv
+*.zip
+
+models/
+venv/
+__pycache__/
 
 # OS
 .DS_Store

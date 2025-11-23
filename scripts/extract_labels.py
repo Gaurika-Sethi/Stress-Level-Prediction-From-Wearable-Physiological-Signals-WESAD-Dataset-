@@ -11,8 +11,7 @@ def extract_labels(subject):
 
     labels_700hz = data["label"]
 
-    # wrist sampling rate = 64 Hz
-    factor = 700 // 64  # ≈ 10
+    factor = 700 // 64  
     labels_64hz = labels_700hz[::factor]
 
     out_dir = Path("data/interim")

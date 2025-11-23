@@ -15,11 +15,9 @@ def load_with_timestamps(csv_path, sample_rate):
 
     start_time = float(lines[0].strip())
 
-    # Load data after the first 2 lines
     df = pd.read_csv(csv_path, skiprows=2, header=None)
     n = len(df)
 
-    # Generate timestamps
     timestamps = start_time + np.arange(n) / sample_rate
     df["timestamp"] = timestamps
 
@@ -29,22 +27,18 @@ def load_with_timestamps(csv_path, sample_rate):
 def extract_wrist_signals(subject):
     base = Path("data/raw/WESAD") / subject / f"{subject}_E4_Data"
 
-    # File paths
     bvp_path  = base / "BVP.csv"
     eda_path  = base / "EDA.csv"
     temp_path = base / "TEMP.csv"
 
-    # Load each signal
     bvp  = load_with_timestamps(bvp_path, 64.0)
     eda  = load_with_timestamps(eda_path, 4.0)
     temp = load_with_timestamps(temp_path, 4.0)
 
-    # Rename columns for clarity
     bvp  = bvp.rename(columns={0: "bvp"})
     eda  = eda.rename(columns={0: "eda"})
     temp = temp.rename(columns={0: "temp"})
 
-    # Merge all wrist signals using timestamp
     merged = pd.merge_asof(
         bvp.sort_values("timestamp"),
         eda.sort_values("timestamp"),
@@ -59,7 +53,6 @@ def extract_wrist_signals(subject):
         direction="nearest"
     )
 
-    # Save to interim
     out_dir = Path("data/interim")
     out_dir.mkdir(parents=True, exist_ok=True)
 

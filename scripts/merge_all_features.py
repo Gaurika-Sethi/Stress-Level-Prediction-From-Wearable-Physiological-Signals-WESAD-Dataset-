@@ -5,7 +5,6 @@ def merge_all_features():
     processed_dir = Path("data/processed")
     out_path = processed_dir / "all_features.csv"
 
-    # Find all feature files for subjects
     feature_files = sorted(processed_dir.glob("S*_features.csv"))
 
     if not feature_files:
@@ -15,7 +14,7 @@ def merge_all_features():
     dfs = []
     for f in feature_files:
         df = pd.read_csv(f)
-        subject = f.stem.split("_")[0]   # e.g. 'S10' from 'S10_features'
+        subject = f.stem.split("_")[0]   
         df["subject"] = subject
         dfs.append(df)
 

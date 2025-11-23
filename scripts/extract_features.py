@@ -3,10 +3,6 @@ import pandas as pd
 from pathlib import Path
 from scipy.signal import find_peaks
 
-# ==========================
-# HRV-LIKE FEATURE FUNCTIONS
-# ==========================
-
 def compute_hrv_features(bvp_window):
     """Basic HRV-like features from BVP differences."""
     diffs = np.diff(bvp_window)
@@ -15,7 +11,6 @@ def compute_hrv_features(bvp_window):
     sdnn = np.std(diffs) if len(diffs) > 1 else np.nan
     pnn50 = np.mean(np.abs(diffs) > 0.05) if len(diffs) > 1 else np.nan
 
-    # Simple peak detection for HR (not PRV)
     peaks = np.where(
         (bvp_window[1:-1] > bvp_window[:-2]) &
         (bvp_window[1:-1] > bvp_window[2:])
@@ -25,26 +20,18 @@ def compute_hrv_features(bvp_window):
 
     return hr, rmssd, sdnn, pnn50
 
-
-# ==============================
-# ADVANCED FEATURE EXTRACTION
-# ==============================
-
 def compute_advanced_bvp_features(bvp_window, fs=64):
     """Extract BVP peaks, amplitude, energy, PRV."""
-    # Proper peak detection
+
     peaks, _ = find_peaks(bvp_window, distance=int(0.5 * fs))
 
-    # Peak-to-peak amplitude
     if len(peaks) > 1:
         bvp_pp_amp = np.mean(np.diff(bvp_window[peaks]))
     else:
         bvp_pp_amp = 0
 
-    # Energy
     bvp_energy = np.sum(bvp_window ** 2)
 
-    # PRV (Pulse Rate Variability)
     if len(peaks) > 1:
         ibi = np.diff(peaks) / fs
         prv_sdnn = np.std(ibi)
@@ -56,7 +43,7 @@ def compute_advanced_bvp_features(bvp_window, fs=64):
 
 def compute_advanced_eda_features(eda_window, fs=4):
     """SCR count, amplitude, rise rate."""
-    scr_peaks, _ = find_peaks(eda_window, distance=fs)  # 1 second apart
+    scr_peaks, _ = find_peaks(eda_window, distance=fs)  
     scr_count = len(scr_peaks)
 
     if scr_count > 0:
@@ -79,10 +66,6 @@ def compute_temp_features(temp_window):
     return temp_var, temp_change
 
 
-# ==============================
-# MAIN EXTRACTION FUNCTION
-# ==============================
-
 def extract_features(subject):
 
     clean_path = Path("data/interim") / f"{subject}_clean.csv"
@@ -96,8 +79,8 @@ def extract_features(subject):
     df["label"] = labels[:min_len]
 
     FS = 64
-    window_size = 3 * FS   # 3-second windows (modify if needed)
-    step = FS              # 1-second stride
+    window_size = 3 * FS   
+    step = FS              
 
     rows = []
 
@@ -109,26 +92,20 @@ def extract_features(subject):
         eda = window["eda"].values
         temp = window["temp"].values
 
-        # ----- Basic HRV features -----
         hr, rmssd, sdnn, pnn50 = compute_hrv_features(bvp)
 
-        # ----- Advanced BVP features -----
         bvp_pp_amp, bvp_energy, prv_sdnn = compute_advanced_bvp_features(bvp)
 
-        # ----- Basic EDA features -----
         eda_mean = eda.mean()
         eda_std = eda.std()
         eda_slope = (eda[-1] - eda[0]) / window_size
 
-        # ----- Advanced EDA features -----
         scr_count, scr_mean_amp, scr_rise_rate = compute_advanced_eda_features(eda, fs=4)
 
-        # ----- Temperature features -----
         temp_mean = temp.mean()
         temp_slope = (temp[-1] - temp[0]) / window_size
         temp_var, temp_change = compute_temp_features(temp)
 
-        # Label for the window
         label = window["label"].mode()[0]
 
         rows.append([
@@ -141,7 +118,6 @@ def extract_features(subject):
             label
         ])
 
-    # Create dataframe
     feature_cols = [
         "hr", "rmssd", "sdnn", "pnn50",
         "eda_mean", "eda_std", "eda_slope",
@@ -154,7 +130,6 @@ def extract_features(subject):
 
     features = pd.DataFrame(rows, columns=feature_cols)
 
-    # Save
     out_dir = Path("data/processed")
     out_dir.mkdir(parents=True, exist_ok=True)
 

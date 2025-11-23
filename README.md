@@ -234,7 +234,7 @@ scripts/
 - Medium: https://medium.com/@pixelsnsyntax
 - Twitter: https://twitter.com/pixelsnsyntax
 
-Project Link: [Repository link](https://github.com/Gaurika-Sethi/Heart-Attack-Risk-Prediction-ML-Web-App-.git)
+Project Link: [Repository link](https://github.com/Gaurika-Sethi/Stress-Level-Prediction-From-Wearable-Physiological-Signals-WESAD-Dataset-.git)
 
 ## License
 

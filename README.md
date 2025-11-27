@@ -119,8 +119,8 @@ This ensures true person-independent generalization — mandatory for biomedical
 
 Typical performance:
 
-- Accuracy: ~0.92–0.97
-- AUC: ~0.95–0.99
+- Accuracy: ~0.67
+- AUC: ~0.69
 
 ### Visualizations
 
